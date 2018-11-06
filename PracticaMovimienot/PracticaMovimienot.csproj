@@ -94,6 +94,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="car.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="dos.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
