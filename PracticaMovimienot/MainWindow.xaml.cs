@@ -62,6 +62,30 @@ namespace PracticaMovimienot
                     {
                         Canvas.SetLeft(imgCarro, 800);
                     }
+                    //Intersección en X
+                    double xCarro = Canvas.GetLeft(imgCarro);
+                    double xTigre = Canvas.GetLeft(imgTigre);
+
+                    if (xTigre + imgTigre.Width >= xCarro && xTigre <= xCarro +imgCarro.Width)
+                    {
+                        lblinterseccionX.Text = "SI HAY INTERSECCION EN X!!!";
+                    }
+                    else
+                    {
+                        lblinterseccionX.Text = "No hay interseccion en X";
+                    }
+                    //Intersección en Y
+                    double yCarro = Canvas.GetTop(imgCarro);
+                    double yTigre = Canvas.GetTop(imgTigre);
+
+                    if (yTigre + imgTigre.Height >= yCarro && yTigre <= yCarro + imgCarro.Height)
+                    {
+                        lblinterseccionY.Text = "SI HAY INTERSECCION EN Y!!!";
+                    }
+                    else
+                    {
+                        lblinterseccionY.Text = "No hay interseccion en Y";
+                    }
                     tiempoAnterior = tiempoActuali;
                 }
                 );
