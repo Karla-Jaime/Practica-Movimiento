@@ -27,6 +27,8 @@ namespace PracticaMovimienot
         Stopwatch stopwatch; //Toma el tiempo de ejecución del programa
         TimeSpan tiempoAnterior; //Timespan guarda rangos de tiempo
 
+        enum EstadoJuego { GamePlay, GameOver};
+        EstadoJuego estadoActual = EstadoJuego.GamePlay;
 
         public MainWindow()
         {
@@ -39,52 +41,72 @@ namespace PracticaMovimienot
 
             //Se puede mandar como parametro a una función en C#
             //1..Establecer instrucciones
-            ThreadStart threadStart = new ThreadStart(moverEnemigos);
+            ThreadStart threadStart = new ThreadStart(actualizar);
             //2..Inicializar el Thread - Dar valores e instrucciones
             Thread threadMoverEnemigos = new Thread(threadStart);
             //3..Ejecutar el Thread
             threadMoverEnemigos.Start();
         }
 
-        void moverEnemigos()
+        void actualizar()
         {   //Invoke lleva de parametro una función
             while (true) { 
             Dispatcher.Invoke(
-                () => //Se creo una función nueva dentro de otro la => es para indicar que es otra función
+                () => //Se creo una función nueva dentro de otra. La => es para indicar que es otra función
                 {
                     var tiempoActuali = stopwatch.Elapsed;
                     var deltaTime = tiempoActuali - tiempoAnterior;
 
+                    if (estadoActual == EstadoJuego.GamePlay)
+                    {
                         double leftCarroActual = Canvas.GetLeft(imgCarro);
-                                                                   // se mueve 120 pixeles por segundo
-                        Canvas.SetLeft(imgCarro, leftCarroActual - (120* deltaTime.TotalSeconds));
-                    if (Canvas.GetLeft(imgCarro) <= -100)
-                    {
-                        Canvas.SetLeft(imgCarro, 800);
-                    }
-                    //Intersección en X
-                    double xCarro = Canvas.GetLeft(imgCarro);
-                    double xTigre = Canvas.GetLeft(imgTigre);
+                        // se mueve 120 pixeles por segundo
+                        Canvas.SetLeft(imgCarro, leftCarroActual - (120 * deltaTime.TotalSeconds));
+                        if (Canvas.GetLeft(imgCarro) <= -100)
+                        {
+                            Canvas.SetLeft(imgCarro, 800);
+                        }
+                        //Intersección en X
+                        double xCarro = Canvas.GetLeft(imgCarro);
+                        double xTigre = Canvas.GetLeft(imgTigre);
 
-                    if (xTigre + imgTigre.Width >= xCarro && xTigre <= xCarro +imgCarro.Width)
-                    {
-                        lblinterseccionX.Text = "SI HAY INTERSECCION EN X!!!";
-                    }
-                    else
-                    {
-                        lblinterseccionX.Text = "No hay interseccion en X";
-                    }
-                    //Intersección en Y
-                    double yCarro = Canvas.GetTop(imgCarro);
-                    double yTigre = Canvas.GetTop(imgTigre);
+                        if (xTigre + imgTigre.Width >= xCarro && xTigre <= xCarro + imgCarro.Width)
+                        {
+                            lblinterseccionX.Text = "SI HAY INTERSECCION EN X!!!";
+                        }
+                        else
+                        {
+                            lblinterseccionX.Text = "No hay interseccion en X";
+                        }
+                        //Intersección en Y
+                        double yCarro = Canvas.GetTop(imgCarro);
+                        double yTigre = Canvas.GetTop(imgTigre);
 
-                    if (yTigre + imgTigre.Height >= yCarro && yTigre <= yCarro + imgCarro.Height)
-                    {
-                        lblinterseccionY.Text = "SI HAY INTERSECCION EN Y!!!";
+                        if (yTigre + imgTigre.Height >= yCarro && yTigre <= yCarro + imgCarro.Height)
+                        {
+                            lblinterseccionY.Text = "SI HAY INTERSECCION EN Y!!!";
+                        }
+                        else
+                        {
+                            lblinterseccionY.Text = "No hay interseccion en Y";
+                        }
+                        if (xTigre + imgTigre.Width >= xCarro && xTigre <= xCarro + imgCarro.Width &&
+                        yTigre + imgTigre.Height >= yCarro && yTigre <= yCarro + imgCarro.Height
+                        )
+                        {
+                            lblcolision.Text = "HAY COLISIÓN!!";
+                            estadoActual = EstadoJuego.GameOver;
+                            elCanvas.Visibility = Visibility.Collapsed;
+                            canvasGameOver.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            lblcolision.Text = "No hay colisión";
+                        }
                     }
-                    else
+                    else if(estadoActual == EstadoJuego.GameOver)
                     {
-                        lblinterseccionY.Text = "No hay interseccion en Y";
+
                     }
                     tiempoAnterior = tiempoActuali;
                 }
@@ -94,6 +116,8 @@ namespace PracticaMovimienot
 
         private void elCanvas_KeyDown(object sender, KeyEventArgs e)
         {
+            if (estadoActual == EstadoJuego.GamePlay)
+            {
             if (e.Key == Key.Up)
             {
                 double topTigreActual = Canvas.GetTop(imgTigre);
@@ -116,6 +140,7 @@ namespace PracticaMovimienot
             {
                 double RightTigreActual = Canvas.GetLeft(imgTigre);
                 Canvas.SetLeft(imgTigre, RightTigreActual + 15);
+            }
             }
         }
     }
