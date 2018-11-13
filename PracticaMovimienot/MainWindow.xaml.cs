@@ -30,6 +30,11 @@ namespace PracticaMovimienot
         enum EstadoJuego { GamePlay, GameOver};
         EstadoJuego estadoActual = EstadoJuego.GamePlay;
 
+        enum Direccion { Arriba, Abajo, Derecha, Izquierda, Ninguna};  //Para aclarar la direccion del jugador
+        Direccion direccionJugador = Direccion.Ninguna; //Inicializar
+
+        double velocidadRana = 80;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -47,7 +52,40 @@ namespace PracticaMovimienot
             //3..Ejecutar el Thread
             threadMoverEnemigos.Start();
         }
-
+        void moverjugador(TimeSpan deltaTime)
+        {
+            double LeftTigreActual = Canvas.GetLeft(imgTigre);
+            switch (direccionJugador){
+                case Direccion.Arriba:
+                    double topTigreActual = Canvas.GetTop(imgTigre);
+                    //Primero el elemento a mover, Luego los valores a mover
+                    Canvas.SetTop(imgTigre, topTigreActual - (velocidadRana * deltaTime.TotalSeconds));
+                    break;
+                case Direccion.Abajo:
+                    double bottomTigreActual = Canvas.GetTop(imgTigre);
+                    Canvas.SetTop(imgTigre, bottomTigreActual + (velocidadRana * deltaTime.TotalSeconds));
+                    
+                    break;
+                case Direccion.Izquierda: //Para que no salga por la izquierda
+                    
+                    if (LeftTigreActual - (velocidadRana * deltaTime.TotalSeconds) >= 0)
+                    {
+                        Canvas.SetLeft(imgTigre, LeftTigreActual - (velocidadRana * deltaTime.TotalSeconds));
+                    } 
+                    break;
+                case Direccion.Derecha:
+                    double nuevaPosicion = LeftTigreActual + (velocidadRana * deltaTime.TotalSeconds);
+                    if (nuevaPosicion + imgTigre.Width <= 800)
+                    {
+                       
+                        Canvas.SetLeft(imgTigre, nuevaPosicion);
+                    }
+                    
+                    break;
+                case Direccion.Ninguna:
+                    break;
+            }
+        }
         void actualizar()
         {   //Invoke lleva de parametro una función
             while (true) { 
@@ -56,6 +94,8 @@ namespace PracticaMovimienot
                 {
                     var tiempoActuali = stopwatch.Elapsed;
                     var deltaTime = tiempoActuali - tiempoAnterior;
+                    //Para ir acelerando la velocidad del movimiento de la rana
+                    //velocidadRana += 2 * deltaTime.TotalSeconds; 
 
                     if (estadoActual == EstadoJuego.GamePlay)
                     {
@@ -66,6 +106,9 @@ namespace PracticaMovimienot
                         {
                             Canvas.SetLeft(imgCarro, 800);
                         }
+                        //moverjugador
+                        //Se agrega al parametro utilizado 
+                        moverjugador(deltaTime);
                         //Intersección en X
                         double xCarro = Canvas.GetLeft(imgCarro);
                         double xTigre = Canvas.GetLeft(imgTigre);
@@ -116,31 +159,50 @@ namespace PracticaMovimienot
 
         private void elCanvas_KeyDown(object sender, KeyEventArgs e)
         {
-            if (estadoActual == EstadoJuego.GamePlay)
+            //Ejemplo para el movimiento seguido es el juego de Pacman
+            if (estadoActual == EstadoJuego.GamePlay)  
             {
             if (e.Key == Key.Up)
             {
-                double topTigreActual = Canvas.GetTop(imgTigre);
-                //Primero el elemento a mover, Luego los valores a mover
-                Canvas.SetTop(imgTigre, topTigreActual - 15);
+                    direccionJugador = Direccion.Arriba;
             }
             if (e.Key == Key.Down)
             {
-                double bottomTigreActual = Canvas.GetTop(imgTigre);
-                Canvas.SetTop(imgTigre, bottomTigreActual + 15);
+                    direccionJugador = Direccion.Abajo;
             }
 
             if (e.Key == Key.Left)
             {
-                double LeftTigreActual = Canvas.GetLeft(imgTigre);
-                Canvas.SetLeft(imgTigre, LeftTigreActual - 15);
+                    direccionJugador = Direccion.Izquierda;
             }
 
             if (e.Key == Key.Right)
             {
-                double RightTigreActual = Canvas.GetLeft(imgTigre);
-                Canvas.SetLeft(imgTigre, RightTigreActual + 15);
+                    direccionJugador = Direccion.Derecha;
+            } 
             }
+        }
+
+        private void elCanvas_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up && direccionJugador == Direccion.Arriba)
+            {
+                direccionJugador = Direccion.Ninguna;
+            }
+
+            if (e.Key == Key.Down && direccionJugador == Direccion.Abajo)
+            {
+                direccionJugador = Direccion.Ninguna;
+            }
+
+            if ( e.Key == Key.Left && direccionJugador == Direccion.Izquierda)
+            {
+                direccionJugador = Direccion.Ninguna;
+            }
+
+            if (e.Key == Key.Right && direccionJugador == Direccion.Derecha)
+            {
+                direccionJugador = Direccion.Ninguna;
             }
         }
     }

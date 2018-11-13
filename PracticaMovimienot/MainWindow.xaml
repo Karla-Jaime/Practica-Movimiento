@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <!--Enfocable-->
     <Canvas>
-        <Canvas Visibility="Visible" Name="elCanvas" KeyDown="elCanvas_KeyDown" Focusable="True">
+        <Canvas Visibility="Visible" Name="elCanvas" KeyDown="elCanvas_KeyDown" KeyUp="elCanvas_KeyUp" Focusable="True">
             <Image Name="imgTigre"  Source="dos.jpg" Width="100" Height="80" Stretch="UniformToFill" Canvas.Left="355" Canvas.Top="300"></Image>
             <Image Name="imgCarro" Source="car.png" Width="100" Height="60" Stretch="Uniform" Canvas.Left="685" Canvas.Top="80"></Image>
             <TextBlock x:Name="lblinterseccionX" Canvas.Left="6" TextWrapping="Wrap" Text="No hay intersección en X" Canvas.Top="8"/>
